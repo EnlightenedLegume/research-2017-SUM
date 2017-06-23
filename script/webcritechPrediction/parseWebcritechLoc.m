@@ -1,0 +1,2 @@
+function location = parseWebcritechLoc(varargin)
+
