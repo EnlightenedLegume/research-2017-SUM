@@ -1,14 +1,14 @@
-function coeffs = parseWebcritechCoeffs(stationNum)
+function coeffs = parseWebcritechCoeffs(stationid)
 % Used for parsing harmonic constants from the eu website
 % Webcritech. Base URL is
 % http://webcritech.jrc.ec.europa.eu/SeaLevelsDb/Home/TideGaugeDetails
 % VARIABLES:
-% stationNum    int    Station number that is appended onto the end
+% stationid    int    Station number that is appended onto the end
 %                      of the url
 % Created 2017/06/22 by Benjamin Huang
 
 url = ['http://webcritech.jrc.ec.europa.eu/SeaLevelsDb/Home/' ...
-              'TideGaugeDetails/' num2str(stationNum)]
+              'TideGaugeDetails/' num2str(stationid)]
 tg = webread(url);
 tg = regexp(tg,'<h3>Harmonics Constants</h3>','split');
 tg = tg{2};
