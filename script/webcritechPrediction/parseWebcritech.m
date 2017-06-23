@@ -13,6 +13,6 @@ url = ['http://webcritech.jrc.ec.europa.eu/SeaLevelsDb/Home/' ...
 % Download html source
 wbpg = webread(url);
 % Split file in half (speed improvement?)
-wbpg = regexp(wbpg,'<h3>Harmonics Constants</h3>','split')
-location = parseWebcritechLoc(wbpg{1});
-coeffs = parseWebcritechCoeffs(wbpg{2});
+wbpg = regexp(wbpg,'<h3>Harmonics Constants</h3>','split');
+location = parseWebcritechLoc('string',wbpg{1});
+coeffs = parseWebcritechCoeffs('string',wbpg{2});
