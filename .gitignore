@@ -1,4 +1,18 @@
 *#*
 *~
+
+# FOLDERS
 note/*
 data/*A.txt*
+script/teaching/*
+
+# IMAGES
+*.pdf*
+*.png*
+*.eps*
+*.ps*
+*.jpg*
+
+# MATLAB
+*.mat*
+*.fig*

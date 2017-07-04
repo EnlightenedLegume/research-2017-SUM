@@ -14,10 +14,10 @@ function loc = parseWebcritechLoc(varargin)
 %        the full webpage, only the part with the latitude and
 %        longitude
 % OUTPUTS 
-% loc     2x1 double matrix. First is latitude (N/S) and second is
-%         longitude (E/W). Currently, Webcritech lists lat/lon
-%         always in N and E, so Southern and Western coordinates
-%         are negative
+% loc    2x1 double matrix. First is latitude (N/S) and second is
+%        longitude (E/W). Currently, Webcritech lists lat/lon
+%        always in N and E, so Southern and Western coordinates
+%        are negative
     
 % Created by Benjamin Huang on 06/23/2017
 
@@ -36,7 +36,7 @@ switch varmode
     exp = '<td>Lat/Lon</td><td>[^<]*</td>';
     locHTML = regexp(wbpgNos,exp,'match');
     % Remove extraneous HTML tags and text
-    locStr = regexp(locHTML,'\d\.\d*','match');
+    locStr = regexp(locHTML,'\d*\.\d*','match');
     loc = cell2mat(cellfun(@(x) cellfun(@str2num,x),locStr, ...
                            'UniformOutput',false));
   case 'string'
@@ -47,7 +47,7 @@ switch varmode
     exp = '<td>Lat/Lon</td><td>[^<]*</td>';
     locHTML = regexp(wbpgNos,exp,'match');
     % Remove extraneous HTML tags and text
-    locStr = regexp(locHTML,'\d\.\d*','match');
+    locStr = regexp(locHTML,'\d*\.\d*','match');
     loc = cell2mat(cellfun(@(x) cellfun(@str2num,x),locStr, ...
                            'UniformOutput',false));    
 end

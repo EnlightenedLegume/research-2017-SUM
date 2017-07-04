@@ -45,6 +45,12 @@
 %	lamda		East longitude
 %	iterms		Number of output tide terms
 %	gravtide		Output gravity tide
+%       
+%     NOTES FROM BENJAMIN'S READTHROUGH OF CODE AND THE ASSOCIATED
+%        LAB FOUND AT
+%        http://www.colorado.edu/ASEN/asen2003/Spring2008/lab3.html
+%        droptime_fg5:    refers to the start time of an experiment
+%            on the JILA FG5 instrument to measure gravity
 function [gravtide_o] = gravtide (theta,lamda,droptime_fg5)
 global dsz dcz dsl dcl ssz scz ssl scl dpar sdist;  % bpos common block
 global h k l;                   	% love common block
