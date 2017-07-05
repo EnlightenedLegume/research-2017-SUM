@@ -3,8 +3,9 @@
 
 # FOLDERS
 note/*
-data/*A.txt*
+data/*
 script/teaching/*
+figure/*
 
 # IMAGES
 *.pdf*
