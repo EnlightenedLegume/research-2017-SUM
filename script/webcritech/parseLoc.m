@@ -1,13 +1,13 @@
-function loc = parseWebcritechLoc(varargin)
+function loc = parseLoc(varargin)
 % Function to pull latitude and longitude from Webcritech 
 % Base URL is
 % http://webcritech.jrc.ec.europa.eu/SeaLevelsDb/Home/TideGaugeDetails
 % 
 % INPUTS 
-% loc = parseWebcritechLoc('id',stationId)
+% loc = parseLoc('id',stationId)
 %        Takes a station's id (<stationId>) and parses the
 %        station's latitude and longitude from the webpage directly
-% loc = parseWebcritechLoc('string',webpage)
+% loc = parseLoc('string',webpage)
 %        Takes a station's detail webpage (HTML source as a string
 %        stored in <webpage>) and parses the latitude and longitude
 %        from it. Note that 'string' mode does not necessarily need
@@ -36,7 +36,7 @@ switch varmode
     exp = '<td>Lat/Lon</td><td>[^<]*</td>';
     locHTML = regexp(wbpgNos,exp,'match');
     % Remove extraneous HTML tags and text
-    locStr = regexp(locHTML,'\d*\.\d*','match');
+    locStr = regexp(locHTML,'-?\d*\.\d*','match');
     loc = cell2mat(cellfun(@(x) cellfun(@str2num,x),locStr, ...
                            'UniformOutput',false));
   case 'string'
@@ -47,7 +47,7 @@ switch varmode
     exp = '<td>Lat/Lon</td><td>[^<]*</td>';
     locHTML = regexp(wbpgNos,exp,'match');
     % Remove extraneous HTML tags and text
-    locStr = regexp(locHTML,'\d*\.\d*','match');
+    locStr = regexp(locHTML,'-?\d*\.\d*','match');
     loc = cell2mat(cellfun(@(x) cellfun(@str2num,x),locStr, ...
                            'UniformOutput',false));    
 end

@@ -1,13 +1,13 @@
-function coeffs = parseWebcritechCoeffs(varargin)
+function coeffs = parseCoeffs(varargin)
 % Used for parsing harmonic constants from the eu website
 % Webcritech. Base URL is
 % http://webcritech.jrc.ec.europa.eu/SeaLevelsDb/Home/TideGaugeDetails
 %
 % INPUTS
-% coeffs = parseWebcritechCoeffs('id',stationId)
+% coeffs = parseCoeffs('id',stationId)
 %         Takes a station's id (<stationId>) and parses the
 %         corresponding station's harmonic constants into coeffs
-% coeffs = parseWebcritechCoeffs('string',webpage)
+% coeffs = parseCoeffs('string',webpage)
 %         Takes a station's detail webpage (HTML source as a string
 %         stored in (<webpage>)) and parses harmonic constants into
 %         coeffs. Note that 'string' mode does not necessarily need

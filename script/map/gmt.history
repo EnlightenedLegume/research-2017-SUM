@@ -1,0 +1,12 @@
+# GMT 5 Session common arguments shelf
+BEGIN GMT 5.2.1
+B	a10.0f5:Predicted Tidal Interquartile Range (m):
+J	X
+JG	G124/45/15c
+JT	T3.5/50/8c
+JW	W0/15c
+JX	X1/1
+R	1/2/1/2
+Y	15
+L	7
+END

@@ -12,22 +12,33 @@ function height = predictTide(time,coeffs);
 %         length as the input <time>
     
 % Created by Benjamin Huang on 06/23/2017
+% Updated by Benjamin Huang on 07/06/2017
+%         Added support for tide predictions that do not include
+%         the A_0 term
+
     
 % Force <time> to a column vector by unpacking
 time  = time(:);
 % Transpose <time> to a row vector (for vector multiplication)
 time = time';
-% Pull out the first constant (cosine coefficient, 0 harmonic)
-height = coeffs(1,3);
-% Write lambda function to calculate height contribution from each
-% harmonic 
+% Pull out the first constant (cosine coefficient, 0 harmonic) if
+% starting term A_0 is included (period = 0)
+if (coeffs(1,2) == 0)
+    height = coeffs(1,3);
+    begin = 2;
+else 
+    height = 0;
+    begin = 1;
+end
+% Lambda function to calculate height contribution from each
+% harmonic  
 harmonics = @(cosCoeff,sinCoeff,per,t) cosCoeff.*cos(per*t) + ...
     sinCoeff.*sin(per*t);
 % Breakup <coeffs> into constituents
-cosCoeffs = coeffs(2:end,3);
-sinCoeffs = coeffs(2:end,4);
+cosCoeffs = coeffs(begin:end,3);
+sinCoeffs = coeffs(begin:end,4);
 % Convert to period
-pers = 2*pi./coeffs(2:end,2);
+pers = 2*pi./coeffs(begin:end,2);
 % Input into previously defined lambda function
 ih = harmonics(cosCoeffs,sinCoeffs,pers,time);
 % Calculate height
