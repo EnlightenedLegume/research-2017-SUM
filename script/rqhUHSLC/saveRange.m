@@ -1,15 +1,19 @@
-path2data = '~/research/data/processed/tideLevel_rqh_UHSLC/';
+function [time,ssh,loc]  = saveRange
 
+% LOAD DATA
+path2data = '~/research/data/processed/tideLevel_rqh_UHSLC/';
+% Get filenames
 names = dir([path2data '*.mat']);
 names = {names.name};
 tgDat = cell(length(names),1);
+% Load the actual data
 for k=1:length(names)
     tgDat{k} = load([path2data names{k}]);
 end
 
-%% 
-all = cell(length(tgDat),1);
-
+% CLEAN AND REFORMAT THE DATA
+% Pre-allocate the array to hold the data in a nicer format
+[time,ssh,loc] = deal(cell(length(tgDat),1));
 for k=1:length(tgDat)
     % Assign the data to more sensible names
     t = tgDat{k}.res.time;
@@ -36,31 +40,24 @@ for k=1:length(tgDat)
     h = h-nanmean(h);
     
     % Save the data to cells
-    temp = {dt,h,lat,lon};
-    all{k} = temp;
+    time{k} = dt;
+    ssh{k} = h;
+    loc{k} = [lat lon];
 end 
+% Convert loc to double array
+loc = cell2mat(loc);
 
-%% Calculate/save range and location
+
+% WRITE THE DATA
+% Open the file and preallocate array for the tidal range
 fid = fopen([path2data 'stationRange.txt'],'wt');
-rnge = NaN(length(all),1);
-for k=1:length(all)
-    rnge(k) = range(all{k}{2});
+rnge = NaN(length(time),1);
+for k=1:length(time)
+    % Calculate the range
+    rnge(k) = range(ssh{k});
     % Convert to meters
     rnge = rnge/1000;
     % Save data
-    fprintf(fid,'%f %f %f\n',all{k}{3},all{k}{4},rnge(k));
+    fprintf(fid,'%f %f %f\n',loc(k,1),loc(k,2),rnge(k));
 end 
 fclose(fid);
-    
-
-%% Plot the Data
-for k=1:length(all)
-    fig = figure(1);
-    plot(all{k}{1},all{k}{2});
-    % Format it
-    grid on;
-    grid minor;
-    axis tight;
-    xlabel('Time');
-    ylabel('Tide height (millimeters)');
-end
