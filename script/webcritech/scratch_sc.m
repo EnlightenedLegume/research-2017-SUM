@@ -53,15 +53,20 @@ for k=1:0.1:10
 end
 
 %%
-figure('Position',[100 100 850 1100]);
+fig = figure('Position',[100 100 850 1100]);
 a = (sumHar' - min(sumHar'))./(max(sumHar') - min(sumHar'));
 %plot(har(1,:,2),a); hold on; grid on; axis tight;
-plot(har(1,:,2),nanmedian(a,2),'k','LineWidth',3);hold on; grid on; axis tight;
-%plot(har(1,:,2),nanmedian(a,2)-nanstd(a,1,2));
-plot(har(1,:,2),nanmedian(a,2)+nanstd(a,1,2));
+hold on; grid on; axis tight;
+e = errorbar(har(1,:,2),nanmedian(a,2),mad(a,1,2),'Marker','o', ...
+         'LineStyle','none'); 
+s = stem(har(1,:,2),nanmedian(a,2));
 set(gca,'xscale','log');
 set(gca,'yscale','log');
 
 xlabel('Period (days)','FontSize',15);
 ylabel('Normalized Summed Coefficient (a.u.)','FontSize',15);
+
+saveFig(fig,'webcritechMedianCoeffs','pdf','orient','landscape', ...
+        'width',26.29,'height',20.32)
+
 
