@@ -1,6 +1,11 @@
 #!/bin/bash
 
-# Pulls hourly research quality tide data from University of Hawaii THREDDS server
+# Pulls hourly research quality tide data from 
+# University of Hawaii THREDDS server
+# First argument is the list of toga IDs to try,
+# second argument is the location to save the
+# data
+# 
 # Created by Benjamin Huang on 06/26/2017
 
 # Loop through ID file
@@ -20,8 +25,8 @@ while read p; do
     # Check if response was succesful, otherwise blacklist id
     if [ $? -eq 0 ]
     then 
-	# Then, parse the number of time points
-	time="$(awk '/Float64 time\[time = [1-9]*\]/ { print $4}' DDS.txt | awk -F']' '/[1-9]*/ {print $1; exit}' )"
+	# Parse the number of time points
+	time="$(awk '/Float64 time\[time = [1-9]*/ { print $4}' DDS.txt | awk -F']' '/[1-9]*/ {print $1; exit}' )"
 	# Subtract 1 for 0 indexing
 	time="$((time -1))"
 
