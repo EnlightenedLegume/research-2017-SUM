@@ -40,25 +40,43 @@
 %	yr1,day1,zhr	Start year, day and hour
 %	yr2,day2,yhr	Start year, day and hour
 %     NOTE THAT ZHR AND YHR ARE DOUBLE PRECISION
-%	d			Time interval in hours, DOUBLE PRECISION
+%	d         	Time interval in hours, DOUBLE PRECISION
 %	theta		North latitude
 %	lamda		East longitude
 %	iterms		Number of output tide terms
-%	gravtide		Output gravity tide
+%	gravtide	Output gravity tide
 %       
 %     NOTES FROM BENJAMIN'S READTHROUGH OF CODE AND THE ASSOCIATED
 %        LAB FOUND AT
 %        http://www.colorado.edu/ASEN/asen2003/Spring2008/lab3.html
-%        droptime_fg5:    refers to the start time of an experiment
-%            on the JILA FG5 instrument to measure gravity
+%        droptime_fg5: Refers to the start time of an experiment
+%            on the JILA FG5 instrument to measure
+%            gravity--consider it the time you want the tide at
+%            FORMAT: 'YYYY/MO/DD HH:MM:SS'
+%        theta: North latitude
+%        lamda: East longitude
+%        
+%        Read subfunction ephem(t) for explanation of the global
+%        variables 
+%        ephem(t) is a function to calculate the ephemeris time
+%        based on the standard time <- IS THIS RIGHT?
+%        
+%        fsin/fcos are remnants from Fortran (replaced)
+%        Moon global variable allows selection of what constituents
+%        should be accounted for:
+%            0: Moon and sun
+%            1: Sun only
+%            2: Moon only
+
 function [gravtide_o] = gravtide (theta,lamda,droptime_fg5)
-global dsz dcz dsl dcl ssz scz ssl scl dpar sdist;  % bpos common block
-global h k l;                   	% love common block
+global dsz dcz dsl dcl ssz scz ... 
+    ssl scl dpar sdist;  % bpos common
+global h k l;            % love common block
        h =[0.6114  0.2891   0.175];
        k =[0.304   0.09421  0.043];
        l =[0.0832  0.0145   0.0103];
 
-global azt azs;        % azimut common block
+global azt azs;                  % azimut common block
 global etmut;                    % tdiff common block
 global moon;                     % sunny common block
        moon=0;
@@ -192,8 +210,8 @@ global etmut; %tdiff common block
 %      1  - moon only
 %      2  - sun only
 global moon;
-%fcos(xxx) = cos(sngl(xxx));
-%fsin(xxx) = sin(sngl(xxx));
+%cos(xxx) = cos(sngl(xxx));
+%sin(xxx) = sin(sngl(xxx));
 pi20=62.8318530717958d0;
 %   compute universal time in hours
 ts = 876600.d0*t -12.d0 - (etmut/3600.d0);
@@ -233,25 +251,27 @@ end
 hm=4.7199666d0+8399.7091449d0*t-.0000198d0*t2;
 pm=5.83515154d0+71.01804120839d0*t-.180205d-3*t2;
 nm=4.523601515d0-33.75714624d0*t+.3626406335d-4*t2;
+%   BEN: Brown's theory refers to Ernest William Brown's lunar
+%       theory and accompanying lunar tables
 %   bl bls bf bd are the fundamental arguments of browns theory
-bl=hm-pm;
-bls=hs-ps;
-bf=hm-nm;
-bd=hm-hs;
+bl=hm-pm;  % BEN: Moon's mean anomaly
+bls=hs-ps; % BEN: Sun's mean anomaly
+bf=hm-nm;  % BEN: Moon's mean argument of latitude
+bd=hm-hs;  % BEN: Moon's mean solar elongation
 %   lunar lat long and parallax from brown.  latter two from
 %   improved lunar ephemeris, latitude from ras paper of 1908...
-tlongm=hm+.10976*fsin(bl)-.02224*fsin(bl-2.*bd)+0.01149*fsin(2.*bd)+...
-       0.00373*fsin(2.*bl)-.00324*fsin(bls)-.00200*fsin(2.*bf)-0.00103*...
-       fsin(2.*bl-2.*bd)-.00100*fsin(bl+bls-2.*bd)+0.00093*fsin(bl+2.*bd)...
-       -.00080*fsin(bls-2.*bd)+.00072*fsin(bl-bls)-.00061*fsin(bd)-...
-       .00053*fsin(bl+bls);
-tlatm=.08950*fsin(bf)+.00490*fsin(bl+bf)-.00485*fsin(bf-bl)-.00303*...
-      fsin(bf-2.*bd)+.00097*fsin(2.*bd+bf-bl)-.00081*fsin(bl+bf-2.*bd)+...
-      .00057*fsin(bf+2.*bd);
-plx=(3422.45+186.54*fcos(bl)+34.31*fcos(bl-2.*bd)+28.23*fcos(2.*bd...
-     )+10.17*fcos(2.*bl)+3.09*fcos(bl+2.*bd)+1.92*fcos(bls-2.*bd)+1.44*...
-     fcos(bl+bls-2.*bd)+1.15*fcos(bl-bls)-0.98*fcos(bd)-0.95*fcos(bl+...
-     bls)-0.71*fcos(bl-2.*bf)+0.62*fcos(3.*bl)+0.60*fcos(bl-4.*bd));
+tlongm=hm+.10976*sin(bl)-.02224*sin(bl-2.*bd)+0.01149*sin(2.*bd)+...
+       0.00373*sin(2.*bl)-.00324*sin(bls)-.00200*sin(2.*bf)-0.00103*...
+       sin(2.*bl-2.*bd)-.00100*sin(bl+bls-2.*bd)+0.00093*sin(bl+2.*bd)...
+       -.00080*sin(bls-2.*bd)+.00072*sin(bl-bls)-.00061*sin(bd)-...
+       .00053*sin(bl+bls);
+tlatm=.08950*sin(bf)+.00490*sin(bl+bf)-.00485*sin(bf-bl)-.00303*...
+      sin(bf-2.*bd)+.00097*sin(2.*bd+bf-bl)-.00081*sin(bl+bf-2.*bd)+...
+      .00057*sin(bf+2.*bd);
+plx=(3422.45+186.54*cos(bl)+34.31*cos(bl-2.*bd)+28.23*cos(2.*bd...
+     )+10.17*cos(2.*bl)+3.09*cos(bl+2.*bd)+1.92*cos(bls-2.*bd)+1.44*...
+     cos(bl+bls-2.*bd)+1.15*cos(bl-bls)-0.98*cos(bd)-0.95*cos(bl+...
+     bls)-0.71*cos(bl-2.*bf)+0.62*cos(3.*bl)+0.60*cos(bl-4.*bd));
 sinmla=sin(tlatm);
 cosmla=cos(tlatm);
 sinmln=sin(tlongm);
@@ -270,6 +290,7 @@ dsl = sin(ll);
 dcl = cos(ll);
 dpar = plx;
       
+% BEN: I'm having trouble understanding elastd
 %------------------------------------------------------------------      
 function [grav,tilt,strain,gdc] = elastd(ntw)
 %   computes the earth tides on an elastic earth, given the solar and lunar
@@ -303,6 +324,7 @@ global azt azs
 % and solar distance
 global dsz dcz dsl dcl ssz scz ssl scl dpar sdist;  
 
+% BEN: coor packages all these location variables up
 coor =[dsz dcz dsl dcl ssz scz ssl scl];
 par = dpar; 	
 % Data for mean parallaxes, a times m over m(earth), equatorial radius.
@@ -312,20 +334,20 @@ g1=9.79828;g2=9.82022; ppp(1)=3.;iflag=0; strain(1) = 0;
 % On first call compute factors for gravity and tilt, and dc tides
 % at the given latitude.
 if (iflag ~= 1) 
-   iflag=1;
-   for i = 1:3
-     del(i) = 1. + (2./(i+1.))*h(i) - ((i+2.)/(i+1.))*k(i);
-     dim(i) = 1. + k(i) - h(i);
-   end  
-	%  dc gravity tide is also known as the Honkasalo correction
-	%  **note that the love numbers for an elastic earth are used
-	%  in computing the dc tide as well.eq
-	gdc = -3.0481e-7*(3*cth^2 - 1.)*del(1)*radn;
-	tnsdc = -9.1445e-7*cth*sth.*dim(1).*radn./gl;
-   etdc = -1.555e-8*(h(1)*(3.*cth^2-1.) - 6.*l(1)*(2.*cth^2 -1.));
-   eldc = -1.555e-8*(h(1)*(3.*cth^2-1.) - 6.*l(1)*cth^2);
-   potdc = .0992064*(1.-3*cth^2);
-   re = 1./(radn*a);
+    iflag=1;
+    for i = 1:3
+        del(i) = 1. + (2./(i+1.))*h(i) - ((i+2.)/(i+1.))*k(i);
+        dim(i) = 1. + k(i) - h(i);
+    end  
+    %  dc gravity tide is also known as the Honkasalo correction
+    %  **note that the love numbers for an elastic earth are used
+    %  in computing the dc tide as well.eq
+    gdc = -3.0481e-7*(3*cth^2 - 1.)*del(1)*radn;
+    tnsdc = -9.1445e-7*cth*sth.*dim(1).*radn./gl;
+    etdc = -1.555e-8*(h(1)*(3.*cth^2-1.) - 6.*l(1)*(2.*cth^2 -1.));
+    eldc = -1.555e-8*(h(1)*(3.*cth^2-1.) - 6.*l(1)*cth^2);
+    potdc = .0992064*(1.-3*cth^2);
+    re = 1./(radn*a);
 end   
 
 % zero out arrays
@@ -334,46 +356,46 @@ tilt = [0 0]; e = [0 0 0]; tltcor = [0 0]; grav = 0; gnth = 0;
 pa(1) = par/3422.45; pa(2) = 1/sdist;
 % in outer loop, ii = 1 for moon, 2 for sun
 for ii = 1:2
-	id = 3;
-	if(ii==2) 
-		id = 1; 
-	end;
-	ir = 4*(ii-1);
-	% find cosine of zenith angle, potential constants, legendre polynomials
-	% and their derivatives, and derivatives of the cosine of the zenith angle.
-	cll = clg*coor(ir+4) + slg*coor(ir+3);
-   sll = slg*coor(ir+4) - clg*coor(ir+3);
-   cz = coor(ir+2);
-   sz = coor(ir+1);
-   cu = cth*cz + sth*sz*cll;
-   xi = rbor(ii)*pa(ii)*radn;
-	cc = amrat(ii)*rbor(ii)*pa(ii);
-   %fprintf ('ii  amrat   %d %e  \n',ii,amrat(ii));
-	rkr(1) = cc*xi*xi;
-   rkr(2) = rkr(1)*xi;
-   rkr(3) = rkr(2)*xi;
-   p(1) = 0.5*(3*cu*cu - 1.);
-   pp(1)=3*cu;
-   if(ii~= 2) 
-		p(2) = .5*cu*(5.*cu*cu - 3.);
-      p(3) = .25*(7.*cu*p(2) - 3.*p(1));
-      pp(2) = 1.5*(5.*cu*cu - 1.);
-      pp(3) = .25*(7.*p(2) + cu*pp(2)) - 3.*pp(1);
-      ppp(2) = 15.*cu;
-      ppp(3) = 7.5*(7.*cu*cu - 1.);
-	end
-   cut = -sth*cz + cth*sz*cll;
-   cutt = -cu;
-   cul = -sth*sz*sll;
-   cull = -sth*sz*cll;
-   cutl = -cth*sz*sll;
-   for j = 1:id
-		if(ntw(1)==1) 
-         grav = grav + del(j)*(j+1)*rkr(j)*p(j)*g1*re;
-      %   fprintf('rkr(j) p(j) %e %d %e %e\n',grav,j,rkr(j),p(j));
-      end
-   end
-   gnth = gnth - dim(1)*rkr(1)*pp(1)*g1*cut*re;
+    id = 3;
+    if(ii==2) 
+        id = 1; 
+    end;
+    ir = 4*(ii-1);
+    % find cosine of zenith angle, potential constants, legendre polynomials
+    % and their derivatives, and derivatives of the cosine of the zenith angle.
+    cll = clg*coor(ir+4) + slg*coor(ir+3);
+    sll = slg*coor(ir+4) - clg*coor(ir+3);
+    cz = coor(ir+2);
+    sz = coor(ir+1);
+    cu = cth*cz + sth*sz*cll;
+    xi = rbor(ii)*pa(ii)*radn;
+    cc = amrat(ii)*rbor(ii)*pa(ii);
+    %fprintf ('ii  amrat   %d %e  \n',ii,amrat(ii));
+    rkr(1) = cc*xi*xi;
+    rkr(2) = rkr(1)*xi;
+    rkr(3) = rkr(2)*xi;
+    p(1) = 0.5*(3*cu*cu - 1.);
+    pp(1)=3*cu;
+    if(ii~= 2) 
+        p(2) = .5*cu*(5.*cu*cu - 3.);
+        p(3) = .25*(7.*cu*p(2) - 3.*p(1));
+        pp(2) = 1.5*(5.*cu*cu - 1.);
+        pp(3) = .25*(7.*p(2) + cu*pp(2)) - 3.*pp(1);
+        ppp(2) = 15.*cu;
+        ppp(3) = 7.5*(7.*cu*cu - 1.);
+    end
+    cut = -sth*cz + cth*sz*cll;
+    cutt = -cu;
+    cul = -sth*sz*sll;
+    cull = -sth*sz*cll;
+    cutl = -cth*sz*sll;
+    for j = 1:id
+        if(ntw(1)==1) 
+            grav = grav + del(j)*(j+1)*rkr(j)*p(j)*g1*re;
+            %   fprintf('rkr(j) p(j) %e %d %e %e\n',grav,j,rkr(j),p(j));
+        end
+    end
+    gnth = gnth - dim(1)*rkr(1)*pp(1)*g1*cut*re;
 end
 % ellipticity corrections, convert strains to strainmeter
 %ntw
@@ -386,7 +408,8 @@ if (ntw(1)==1)
 end
 
  
-
+% BEN: Leftovers from Fortran (sngl converts to single precision in
+%     Fortran)
 %-----------------------------------------------------------------
 function [y] = fcos(xxx) ;
 y = cos(xxx);

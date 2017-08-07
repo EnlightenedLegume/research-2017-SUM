@@ -10,8 +10,8 @@ function [YY, MO, DD, HH, MM, SS] = undo_date(start_time);
 YY = str2num(datestr(start_time, 11));
 MO = str2num(datestr(start_time, 5));
 DD = str2num(datestr(start_time, 7));
-hms = datestr(start_time, 13);
-HH = str2num(hms(1:2));
-MM = str2num(hms(4:5));
-SS = str2num(hms(7:8));
+hms_v = datestr(start_time, 13);
+HH = str2num(hms_v(1:2));
+MM = str2num(hms_v(4:5));
+SS = str2num(hms_v(7:8));
 
