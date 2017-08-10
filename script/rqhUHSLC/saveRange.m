@@ -1,14 +1,14 @@
 function [time,ssh,loc]  = saveRange
 
 % LOAD DATA
-path2data = '~/research/data/processed/tideLevel_rqh_UHSLC/';
+path2data = fullfile('..','..','data','processed','tideLevel_rqh_UHSLC');
 % Get filenames
-names = dir([path2data '*.mat']);
+names = dir(fullfile(path2data,'*.mat'));
 names = {names.name};
 tgDat = cell(length(names),1);
 % Load the actual data
 for k=1:length(names)
-    tgDat{k} = load([path2data names{k}]);
+    tgDat{k} = load(fullfile(path2data,names{k}));
 end
 
 % CLEAN AND REFORMAT THE DATA
