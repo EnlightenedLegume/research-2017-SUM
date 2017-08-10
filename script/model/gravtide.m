@@ -65,8 +65,8 @@
 %        Moon global variable allows selection of what constituents
 %        should be accounted for:
 %            0: Moon and sun
-%            1: Sun only
-%            2: Moon only
+%            1: Moon only
+%            2: Sun only
 
 function [gravtide_o] = gravtide (theta,lamda,droptime_fg5)
 global dsz dcz dsl dcl ssz scz ... 
