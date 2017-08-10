@@ -22,3 +22,6 @@ figure/*
 *.cpt*
 *.history*
 *.in*
+
+# RQH Loading 
+script/pullData/DDS.txt
