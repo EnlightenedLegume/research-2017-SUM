@@ -1,5 +1,5 @@
 %% Load the data
-[time,ssh,loc] = saveRange;
+time = saveRange;
 
 %% Find the highest density area
 % Put all times in one array
