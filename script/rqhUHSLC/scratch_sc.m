@@ -1,12 +1,12 @@
 %% Load the data
-time = saveRange;
+[time,ssh,loc] = saveRange;
 
-%% Find the highest density area
-% Put all times in one array
+%% Put all times in one array
 timeT = cellfun(@(x) x', time,'UniformOutput',0);
 allTime = [timeT{:}];
-% Look at histcounts
-[nums,edges] = histcounts(allTime);
+
+%% Look at the distribution
+[nums,edges] = histcounts(allTime,75);
 % Find highest density 
 [val,ind] = max(nums);
 edg1 = edges(ind);
